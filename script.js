@@ -44,7 +44,7 @@ function hashtagMousemove(e) {
 
 hashtagPlot.addEventListener('mouseout', playVideo, false);
 function playVideo(e) {
-	scrubBar.style.visibility = "hidden";
+	scrubBar.style.visibility = "visible";
 	SOTUvideo.play();
 }
 
@@ -123,10 +123,13 @@ window.onload = function () {
 
 // Set up the video so that the chart is updated and the nation recolored every time the time changes
 document.getElementById('sotu-video').addEventListener("timeupdate", updatePage);
-function updatePage() {
+function updatePage(e) {
+	
+	scrubBar.style.left = parseInt(1280 * SOTUvideo.currentTime/SOTUvideo.duration) + "px"; //update scrub here part #1 for project
 	var dominantHashtag = dominantHashtagAt(SOTUvideo.currentTime);
 	recolorNation(dominantHashtag);
 	updateChart();
+
 }
 
 function dominantHashtagAt(time) {
