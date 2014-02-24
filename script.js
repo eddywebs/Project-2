@@ -77,7 +77,7 @@ function nearestStamp(fractionScrubbed) {
 	// Figure out what the closest timestamp we have is to the current amount of scrubbing
 	var timestampEquivalent = fractionScrubbed * SOTUvideo.duration + videoOffset; // IF we had a timestamp, what would it be?
 	for (var i = 0; i < timestamps.length - 1; i++) {
-		if ( timestamps[i+1] > timestampEquivalent ) { // Find teh first timestamp our guess is greater than
+		if ( timestamps[i+1] > timestampEquivalent ) { // Find the first timestamp our guess is greater than
 			return timestamps[i];
 		}
 	}
@@ -93,7 +93,7 @@ for (var i = 0; i < hashtagNav.length; i++) {
 	hashtagNav[i].addEventListener('click', navClick, false);
 }
 
-function navClick(e) {
+function navClick(e) { //Is there a bug in this function ?
 	var timestamp = parseInt(this.getAttribute('data-timestamp'), 10);
 	scrubBar.fractionScrubbed = (timestamp-videoOffset)/SOTUvideo.duration;
 	updateVideo(e);
@@ -126,6 +126,10 @@ document.getElementById('sotu-video').addEventListener("timeupdate", updatePage)
 function updatePage(e) {
 	
 	scrubBar.style.left = parseInt(1280 * SOTUvideo.currentTime/SOTUvideo.duration) + "px"; //update scrub here part #1 for project
+	
+	scrubBar.fractionScrubbed = parseInt(scrubBar.style.left, 10)/hashtagPlot.offsetWidth;
+	scrollToTimestamp(nearestStamp(scrubBar.fractionScrubbed));
+	
 	var dominantHashtag = dominantHashtagAt(SOTUvideo.currentTime);
 	recolorNation(dominantHashtag);
 	updateChart();
