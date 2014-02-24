@@ -70,7 +70,10 @@ function updateTranscript(e) {
 
 function scrollToTimestamp(timestamp) {
 	var target = transcript.querySelector('#transcript-time-' + timestamp);
-	document.getElementById('sotu-transcript').scrollTop = target.offsetTop;
+
+	//document.getElementById('sotu-transcript')
+	transcript.scrollTop = target.offsetTop;
+	target.style.backgroundColor="Yellow";
 }
 
 function nearestStamp(fractionScrubbed) {
