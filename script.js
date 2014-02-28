@@ -2,6 +2,7 @@ var hashtagPlot = document.getElementById('hashtag-plot');
 var scrubBar = document.getElementById('scrub-bar');
 var SOTUvideo = document.getElementById('sotu-video');
 var videoOffset = 306;
+var masterControl = false;
 
 // Pull out all the transcript timestamps for use throughout
 var transcript = document.getElementById('sotu-transcript');
@@ -53,6 +54,9 @@ function updateScrubBar(e) {
 
 	scrubBar.style.visibility = 'visible';
 	scrubBar.style.left = e.clientX - position(hashtagPlot).x; // e.clientX is the mouse position
+	console.log(scrubBar.style.left);
+
+	//console.log();
 
 	scrubBar.fractionScrubbed = parseInt(scrubBar.style.left, 10)/hashtagPlot.offsetWidth;
 }
@@ -87,6 +91,23 @@ function nearestStamp(fractionScrubbed) {
 	return timestamps[timestamps.length - 1];
 }
 
+transcript.addEventListener('mouseover', masterControl=true,false);
+transcript.addEventListener('mouseout',masterControl=false, false);
+
+transcript.addEventListener('scroll', updateOnScroll, false);
+function updateOnScroll(e){
+
+	SOTUvideo.time= 
+	console.log("gotta update on scroll");
+}
+// Run hashtagMousemove every time the mouse moves above the hashtagPlot
+hashtagPlot.addEventListener('mousemove', hashtagMousemove, false);
+function hashtagMousemove(e) {
+	updateScrubBar(e);
+	updateVideo(e);
+	updateTranscript(e);
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Adding the nav functionality for the video
@@ -97,6 +118,8 @@ for (var i = 0; i < hashtagNav.length; i++) {
 }
 
 function navClick(e) { //Is there a bug in this function ?
+	console.log("got here !");
+
 	var timestamp = parseInt(this.getAttribute('data-timestamp'), 10);
 	scrubBar.fractionScrubbed = (timestamp-videoOffset)/SOTUvideo.duration;
 	updateVideo(e);
@@ -130,9 +153,11 @@ function updatePage(e) {
 	
 	scrubBar.style.left = parseInt(1280 * SOTUvideo.currentTime/SOTUvideo.duration) + "px"; //update scrub here part #1 for project
 	
-	scrubBar.fractionScrubbed = parseInt(scrubBar.style.left, 10)/hashtagPlot.offsetWidth;
-	scrollToTimestamp(nearestStamp(scrubBar.fractionScrubbed));
-	
+	if(masterControl==false) //scrub only when user is not trying to control the scroll
+	{
+		scrubBar.fractionScrubbed = parseInt(scrubBar.style.left, 10)/hashtagPlot.offsetWidth;
+		scrollToTimestamp(nearestStamp(scrubBar.fractionScrubbed));
+	}
 	var dominantHashtag = dominantHashtagAt(SOTUvideo.currentTime);
 	recolorNation(dominantHashtag);
 	updateChart();
