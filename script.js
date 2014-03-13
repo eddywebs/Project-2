@@ -2,7 +2,7 @@ var hashtagPlot = document.getElementById('hashtag-plot');
 var scrubBar = document.getElementById('scrub-bar');
 var SOTUvideo = document.getElementById('sotu-video');
 var videoOffset = 306;
-var masterControl = false;
+var userControl = false;
 
 // Pull out all the transcript timestamps for use throughout
 var transcript = document.getElementById('sotu-transcript');
@@ -91,14 +91,35 @@ function nearestStamp(fractionScrubbed) {
 	return timestamps[timestamps.length - 1];
 }
 
-transcript.addEventListener('mouseover', masterControl=true,false);
-transcript.addEventListener('mouseout',masterControl=false, false);
+transcript.addEventListener('mouseover', transcriptMouseOver,false);
+function transcriptMouseOver(e){
+	userControl=true;
+	console.log("user control true");
+}
+transcript.addEventListener('mouseout', transcriptMouseOut, false);
+function transcriptMouseOut(e){
+	userControl=false;
+	console.log("user control false");
+}
 
 transcript.addEventListener('scroll', updateOnScroll, false);
 function updateOnScroll(e){
+	//alert(this.id);
+	var stampedDivs = transcript.querySelectorAll('div')
+	//console.log(e.target.div.id);
 
-	SOTUvideo.time= 
-	console.log("gotta update on scroll");
+	for (var i = 0; i < stampedDivs.length; i++) {
+    	console.log(stampedDivs[i].id);
+ 		//document.onmouseover = function() { console.log(stampedDivs[i]); };
+ 		// stampedDivs[i].onclick=function(){
+ 		// // console.log(this.id);
+ 
+ 		// jumptoStamp=parseInt(this.id.split('-')[2], 10);
+ 		// console.log(jumptoStamp);
+ 		// //this.setAttribute('style','background-color:red;');
+ 		// //updateVideoWithTranscript(jumptoStamp);
+ 		// //updateScrubWithTranscript(jumptoStamp); // updateScrubWithVideo();
+ 		 }
 }
 // Run hashtagMousemove every time the mouse moves above the hashtagPlot
 hashtagPlot.addEventListener('mousemove', hashtagMousemove, false);
@@ -118,7 +139,6 @@ for (var i = 0; i < hashtagNav.length; i++) {
 }
 
 function navClick(e) { //Is there a bug in this function ?
-	console.log("got here !");
 
 	var timestamp = parseInt(this.getAttribute('data-timestamp'), 10);
 	scrubBar.fractionScrubbed = (timestamp-videoOffset)/SOTUvideo.duration;
@@ -153,7 +173,7 @@ function updatePage(e) {
 	
 	scrubBar.style.left = parseInt(1280 * SOTUvideo.currentTime/SOTUvideo.duration) + "px"; //update scrub here part #1 for project
 	
-	if(masterControl==false) //scrub only when user is not trying to control the scroll
+	if(userControl==false) //scrub only when user is not trying to control the scroll
 	{
 		scrubBar.fractionScrubbed = parseInt(scrubBar.style.left, 10)/hashtagPlot.offsetWidth;
 		scrollToTimestamp(nearestStamp(scrubBar.fractionScrubbed));
